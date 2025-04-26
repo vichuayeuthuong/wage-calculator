@@ -1,0 +1,201 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Lương Bốc Xếp - Hoàng Anh Group</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Quản Lý Lương Bốc Xếp</h1>
+      <h3>Hoàng Anh Group - Nam Định | Liên hệ: 0965.803.105</h3>
+    </header>
+
+    <!-- Bộ lọc -->
+    <section class="filter-controls">
+      <div class="filter-group">
+        <label for="startDate">Từ ngày:</label>
+        <input type="date" id="startDate">
+      </div>
+      <div class="filter-group">
+        <label for="endDate">Đến ngày:</label>
+        <input type="date" id="endDate">
+      </div>
+      <div class="filter-group">
+        <label for="transactionFilter">Kho:</label>
+        <select id="transactionFilter">
+          <option value="">Tất cả</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="categoryFilter">Danh mục:</label>
+        <select id="categoryFilter">
+          <option value="">Tất cả</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="workerFilter">Công nhân:</label>
+        <select id="workerFilter">
+          <option value="">Tất cả</option>
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button onclick="applyFilters()">Áp dụng bộ lọc</button>
+        <button onclick="resetFilters()">Đặt lại bộ lọc</button>
+      </div>
+    </section>
+
+    <!-- Tổng lương -->
+    <section id="totalWages">
+      <h4>Tổng lương từng công nhân:</h4>
+      <ul id="workerWages"></ul>
+    </section>
+
+    <!-- Quản lý dữ liệu -->
+    <section class="manage-section">
+      <div class="manage-group">
+        <h3>Quản lý kho</h3>
+        <input type="text" id="newWarehouse" placeholder="Kho mới">
+        <button onclick="addWarehouse()">Thêm</button>
+        <ul id="warehouseList"></ul>
+      </div>
+      <div class="manage-group">
+        <h3>Quản lý danh mục</h3>
+        <input type="text" id="newCategory" placeholder="Danh mục mới">
+        <button onclick="addCategory()">Thêm</button>
+        <ul id="categoryList"></ul>
+      </div>
+      <div class="manage-group">
+        <h3>Quản lý công nhân</h3>
+        <input type="text" id="newWorker" placeholder="Công nhân mới">
+        <button onclick="addWorker()">Thêm</button>
+        <ul id="workerList"></ul>
+      </div>
+    </section>
+
+    <!-- Nút thêm giao dịch -->
+    <button onclick="addTransaction()">Thêm giao dịch</button>
+
+    <!-- Tab giao dịch -->
+    <div class="tabs">
+      <button class="tab-button active" onclick="showTab('allTransactions')">Tất cả giao dịch</button>
+      <button class="tab-button" onclick="showTab('filteredTransactions')">Kết quả lọc</button>
+    </div>
+
+    <div id="allTransactions" class="tab-content active">
+      <table id="wageTable">
+        <thead>
+          <tr>
+            <th>Ngày tháng</th>
+            <th>Kho</th>
+            <th>Danh mục</th>
+            <th>Tấn hàng</th>
+            <th>Tiền công/người</th>
+            <th>Công nhân</th>
+            <th>Ghi chú</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="wageTableBody"></tbody>
+      </table>
+    </div>
+
+    <div id="filteredTransactions" class="tab-content">
+      <div class="filtered-header">
+        <div id="filteredTotal" class="total-filtered">
+          <h4>Tổng tiền công: <span id="filteredTotalAmount">0 VNĐ</span></h4>
+        </div>
+        <button class="share-btn" onclick="shareResults()">Chia sẻ</button>
+      </div>
+      <table id="filteredWageTable">
+        <thead>
+          <tr>
+            <th>Ngày tháng</th>
+            <th>Kho</th>
+            <th>Danh mục</th>
+            <th>Tấn hàng</th>
+            <th>Tiền công/người</th>
+            <th>Công nhân</th>
+            <th>Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody id="filteredWageTableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Danh sách gợi ý -->
+    <datalist id="warehouseListData"></datalist>
+    <datalist id="categoryListData"></datalist>
+
+    <!-- Máy tính -->
+    <div id="calculatorModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeCalculator()">×</span>
+        <input type="text" id="calculatorDisplay" readonly>
+        <div class="calculator-buttons">
+          <button onclick="calculatorInput('7')">7</button>
+          <button onclick="calculatorInput('8')">8</button>
+          <button onclick="calculatorInput('9')">9</button>
+          <button onclick="calculatorInput('+')">+</button>
+          <button onclick="calculatorInput('4')">4</button>
+          <button onclick="calculatorInput('5')">5</button>
+          <button onclick="calculatorInput('6')">6</button>
+          <button onclick="calculatorInput('-')">-</button>
+          <button onclick="calculatorInput('1')">1</button>
+          <button onclick="calculatorInput('2')">2</button>
+          <button onclick="calculatorInput('3')">3</button>
+          <button onclick="calculatorInput('*')">*</button>
+          <button onclick="calculatorInput('0')">0</button>
+          <button onclick="calculatorInput('.')">.</button>
+          <button onclick="calculatorInput('/')">/</button>
+          <button onclick="calculatorClear()">C</button>
+          <button onclick="calculatorEvaluate()">=</button>
+        </div>
+        <button onclick="applyWage()">Áp dụng</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

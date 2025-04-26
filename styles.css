@@ -1,0 +1,352 @@
+:root {
+  --primary-color: #007bff;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --share-color: #17a2b8;
+  --background-color: #f4f4f4;
+  --card-background: white;
+  --border-color: #ddd;
+  --text-color: #333;
+  --secondary-text: #555;
+  --saved-bg: #e9f7ff;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: var(--background-color);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--card-background);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+header {
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2em;
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+header h3 {
+  font-size: 1.2em;
+  color: var(--secondary-text);
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+}
+
+.filter-group label {
+  margin-right: 10px;
+  font-size: 1em;
+}
+
+.filter-group select, .filter-group input {
+  padding: 8px;
+  font-size: 1em;
+  width: 200px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+}
+
+#totalWages {
+  font-weight: bold;
+  font-size: 1.2em;
+  margin: 15px 0;
+}
+
+#totalWages h4 {
+  margin: 0 0 10px 0;
+}
+
+#workerWages {
+  list-style: none;
+  padding: 0;
+}
+
+#workerWages li {
+  margin: 5px 0;
+}
+
+.filtered-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.total-filtered {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.total-filtered h4 {
+  margin: 0;
+}
+
+.total-filtered span {
+  color: var(--primary-color);
+}
+
+.manage-section {
+  margin: 30px 0;
+}
+
+.manage-group {
+  margin-bottom: 20px;
+}
+
+.manage-group h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.manage-group input {
+  padding: 8px;
+  font-size: 1em;
+  width: 250px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 1em;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button.save-btn {
+  background-color: var(--success-color);
+}
+
+button.save-btn:hover {
+  background-color: #218838;
+}
+
+button.delete-btn {
+  background-color: var(--danger-color);
+}
+
+button.delete-btn:hover {
+  background-color: #c82333;
+}
+
+button.share-btn {
+  background-color: var(--share-color);
+}
+
+button.share-btn:hover {
+  background-color: #138496;
+}
+
+.tabs {
+  margin: 20px 0;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  margin-right: 5px;
+  background-color: #f2f2f2;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  text-align: left;
+  font-size: 1em;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr.saved {
+  border: 2px solid var(--primary-color);
+  background-color: var(--saved-bg);
+}
+
+.negative {
+  color: red;
+}
+
+input[list], select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+select[multiple] {
+  height: 100px;
+}
+
+datalist {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background-color: var(--card-background);
+  margin: 10% auto;
+  padding: 30px;
+  width: 400px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.calculator-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.calculator-buttons button {
+  padding: 15px;
+  font-size: 1.2em;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+#calculatorDisplay {
+  font-size: 1.2em;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+  font-size: 1.5em;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  font-size: 1em;
+}
+
+/* Print styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #filteredTransactions, #filteredTransactions * {
+    visibility: visible;
+  }
+  #filteredTransactions {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .share-btn {
+    display: none;
+  }
+  table {
+    font-size: 12px;
+  }
+  th, td {
+    padding: 8px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  .filter-group select, .filter-group input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .manage-group input {
+    width: 100%;
+  }
+  table, th, td {
+    font-size: 0.9em;
+  }
+  select[multiple] {
+    height: 80px;
+  }
+  .filtered-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
